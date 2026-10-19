@@ -34,6 +34,7 @@
   --r-card: 28px;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html, body { min-height: 100%; }
 body {
   background: var(--peach);
@@ -213,7 +214,7 @@ button { cursor: pointer; }
 <body>
 
 <div class="wrap">
-  <header style="display:flex;flex-direction:column;gap:16px;align-items:center">
+  <header id="topHeader" style="display:flex;flex-direction:column;gap:16px;align-items:center">
     <div class="made-by">필봉 <span class="ras"><span class="r">R</span><span class="a">A</span><span class="s">S</span></span> 자치회가 준비했어요!</div>
     <span class="pilbong">필봉</span>
     <div class="tiles" aria-label="필봉 키클 독서퀴즈">
@@ -337,7 +338,7 @@ let winners = [];      // {id, grade, cls, name, at}
 
 
 const $ = (id) => document.getElementById(id);
-const show = (id) => { for (const s of ["home", "quiz", "result", "list"]) $(s).hidden = s !== id; window.scrollTo(0, 0); };
+const show = (id) => { for (const s of ["home", "quiz", "result", "list"]) $(s).hidden = s !== id; $("topHeader").hidden = id === "quiz"; window.scrollTo(0, 0); };
 const el = (tag, props = {}, ...kids) => {
   const n = document.createElement(tag);
   for (const [k, v] of Object.entries(props)) {
