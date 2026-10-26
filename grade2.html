@@ -91,7 +91,7 @@ button { cursor: pointer; }
 .form { display: flex; flex-direction: column; gap: 18px; }
 .field-label { font-family: var(--display); font-size: 1.2rem; margin-bottom: 8px; display: block; }
 .pick { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
-.pick.cls { grid-template-columns: repeat(4, 1fr); }
+.pick.cls { grid-template-columns: repeat(3, 1fr); }
 .pick button:disabled { cursor: default; opacity: 1; }
 .pick button {
   font-family: var(--display); font-size: 1.2rem; padding: 10px 0;
@@ -203,7 +203,7 @@ button { cursor: pointer; }
 .confirm .no { background: var(--card); }
 
 @media (max-width: 520px) {
-  .pick.cls { grid-template-columns: repeat(4, 1fr); }
+  .pick.cls { grid-template-columns: repeat(3, 1fr); }
   .rules { grid-template-columns: 1fr; }
   .bigR b { font-size: 4rem; }
   .book-chips { font-size: 1.3rem; }
@@ -347,7 +347,7 @@ function buildPick(box, count, suffix, key) {
     box.append(b);
   }
 }
-buildPick($("classPick"), 4, "반", "cls");
+buildPick($("classPick"), 3, "반", "cls");
 
 $("startForm").addEventListener("submit", (e) => {
   e.preventDefault();
@@ -548,7 +548,7 @@ let filterGrade = 0;
 function renderWinners() {
   $("winCount").textContent = winners.length;
   const f = $("gradeFilter"); f.replaceChildren();
-  ["전체", 1, 2, 3, 4].forEach((c, i) => {
+  ["전체", 1, 2, 3].forEach((c, i) => {
     f.append(el("button", { type: "button", "aria-pressed": String(filterGrade === i), text: i ? `${c}반` : c,
       onclick: () => { filterGrade = i; renderWinners(); } }));
   });
