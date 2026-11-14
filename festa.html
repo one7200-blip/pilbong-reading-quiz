@@ -1,0 +1,792 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>필봉 키클 독서퀴즈 · 다이음 페스타</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap">
+<style>
+/* 레이아웃: 키클 한마당 포스터처럼 살구색 바탕 위에 둥근 흰 카드를 세로로 쌓는 한 화면짜리 앱 (포스터 느낌을 살리려고 밝은 테마 하나로 고정) */
+:root {
+  color-scheme: light;
+  --peach: #FFE6C4;
+  --card: #FFFFFF;
+  --ink: #3A2412;
+  --ink-soft: #7A5B44;
+  --teal: #1A9AAE;
+  --blue: #05A6E3;
+  --blue-soft: #E1F4FC;
+  --red: #EF5249;
+  --red-soft: #FDE6E3;
+  --green: #3FA874;
+  --green-soft: #E2F5EA;
+  --pinkchip: #E79AF0;
+  --lemon: #FBF59B;
+  --tile-pink: #F3B5F8;
+  --tile-yellow: #FFF27A;
+  --tile-rose: #FFBDC2;
+  --tile-sky: #C3E2FF;
+  --tile-lime: #C8EDAA;
+  --violet: #D45FE0;
+  --display: "Jua", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --body: "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --r-card: 28px;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { min-height: 100%; }
+body {
+  background: var(--peach);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 17px;
+  padding-inline: 16px;
+  padding-block: 20px 40px;
+}
+.wrap { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+
+/* 머리말 */
+.made-by { text-align: center; font-family: var(--display); font-size: 1.25rem; display: flex; justify-content: center; align-items: center; gap: .4em; flex-wrap: wrap; }
+.ras { font-size: 1.9rem; letter-spacing: -.02em; line-height: 1; }
+.ras .r { color: var(--blue); } .ras .a { color: var(--red); } .ras .s { color: var(--green); }
+.tiles { display: flex; justify-content: center; align-items: center; gap: clamp(10px, 3vw, 28px); flex-wrap: wrap; }
+.tile-group { display: flex; }
+.tile {
+  font-family: var(--display); color: var(--ink);
+  font-size: clamp(2.4rem, 10vw, 4.6rem); line-height: 1;
+  width: clamp(64px, 16vw, 118px); aspect-ratio: 1; max-width: 100%;
+  display: grid; place-items: center; border-radius: 26%;
+  margin-inline: -4px;
+}
+.tile:nth-child(odd) { transform: rotate(-5deg); }
+.tile:nth-child(even) { transform: rotate(6deg) translateY(6px); }
+.t1 { background: var(--tile-pink); } .t2 { background: var(--tile-yellow); }
+.t3 { background: var(--tile-rose); } .t4 { background: var(--tile-sky); }
+.t5 { background: var(--tile-lime); } .t6 { background: var(--tile-yellow); }
+.pilbong { font-family: var(--display); font-size: 1.1rem; background: var(--teal); color: var(--card); padding: .25em .8em; border-radius: 999px; }
+
+/* 카드 */
+.card { background: var(--card); border: 3px solid var(--teal); border-radius: var(--r-card); padding: 22px clamp(16px, 4vw, 28px); }
+.chip { font-family: var(--display); display: inline-block; padding: .12em .5em; border-radius: 6px; color: var(--card); line-height: 1.2; }
+.chip.pink { background: var(--pinkchip); }
+.chip.blue { background: var(--blue); }
+.h { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: balance; }
+
+/* 도서 소개 카드 */
+.book { display: grid; grid-template-columns: auto 1fr; gap: 6px 20px; align-items: center; }
+.bigR { grid-row: span 2; display: flex; flex-direction: column; align-items: center; font-family: var(--display); color: var(--blue); }
+.bigR b { font-size: 5.4rem; line-height: .9; font-weight: 400; }
+.bigR span { font-size: 1.5rem; }
+.book-chips { display: flex; gap: 8px; flex-wrap: wrap; font-size: 1.7rem; }
+.book-title { font-size: clamp(1.25rem, 4vw, 1.6rem); }
+.rules { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+.rule { background: var(--blue-soft); border-radius: 14px; padding: 10px 8px; text-align: center; font-family: var(--display); font-size: 1.05rem; line-height: 1.35; }
+.rule small { display: block; font-family: var(--body); font-size: .85rem; color: var(--ink-soft); }
+
+/* 입력 */
+.form { display: flex; flex-direction: column; gap: 18px; }
+.field-label { font-family: var(--display); font-size: 1.2rem; margin-bottom: 8px; display: block; }
+.pick { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.pick.cls { grid-template-columns: repeat(2, 1fr); }
+.pick button:disabled { cursor: default; opacity: 1; }
+.pick button {
+  font-family: var(--display); font-size: 1.2rem; padding: 10px 0;
+  background: var(--card); border: 2px solid var(--tile-sky); border-radius: 14px;
+}
+.pick button[aria-pressed="true"] { background: var(--blue); border-color: var(--blue); color: var(--card); }
+.name-input { width: 100%; font-family: var(--display); font-size: 1.4rem; padding: 12px 16px; border: 2px solid var(--tile-sky); border-radius: 14px; background: var(--card); }
+.name-input:focus { border-color: var(--blue); outline: none; }
+.big-btn {
+  font-family: var(--display); font-size: 1.6rem; border: 0; border-radius: 18px;
+  padding: 14px 20px; background: var(--blue); color: var(--card);
+  box-shadow: 0 5px 0 #0383B4; transition: transform .08s;
+}
+.big-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #0383B4; }
+.big-btn.green { background: var(--green); box-shadow: 0 5px 0 #2D8259; }
+.big-btn.ghost { background: var(--card); color: var(--ink); border: 2px solid var(--teal); box-shadow: none; }
+.big-btn:disabled { opacity: .45; cursor: default; }
+.err { color: var(--red); font-family: var(--display); min-height: 1.3em; margin: -6px 0 0; }
+
+/* 스티커 띠 */
+.sticker-bar { background: var(--lemon); border-radius: var(--r-card); padding: 16px 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.sticker-bar .txt { flex: 1; min-width: 0; }
+.sticker-bar .h { color: var(--violet); font-size: 1.35rem; }
+.sticker-bar p { margin: 2px 0 0; color: var(--violet); font-family: var(--display); }
+.link-btn { font-family: var(--display); font-size: 1.1rem; background: var(--card); border: 2px solid var(--violet); color: var(--violet); border-radius: 999px; padding: 8px 16px; }
+
+/* 스티커 */
+.stamp {
+  width: 150px; aspect-ratio: 1; max-width: 100%; border-radius: 50%;
+  border: 5px solid var(--blue); box-shadow: inset 0 0 0 4px var(--card), inset 0 0 0 7px var(--tile-sky);
+  background: var(--card); display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-family: var(--display); text-align: center; line-height: 1.1; flex: none;
+}
+.stamp .top { font-size: .7rem; color: var(--violet); }
+.stamp .mid { display: flex; align-items: center; gap: 4px; margin: 4px 0; }
+.stamp .mid b { font-size: 2.6rem; color: var(--blue); font-weight: 400; }
+.stamp .mid span { font-size: 1.05rem; text-align: left; }
+.stamp .date { font-size: .7rem; color: var(--ink-soft); }
+.stamp.mini { width: 74px; border-width: 3px; box-shadow: inset 0 0 0 2px var(--card), inset 0 0 0 4px var(--tile-sky); }
+.stamp.mini .mid b { font-size: 1.5rem; }
+.stamp.mini .mid span { font-size: .62rem; }
+.stamp.mini .top, .stamp.mini .date { font-size: .45rem; }
+
+/* 퀴즈 */
+.quiz-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-family: var(--display); }
+.who { font-size: 1.15rem; }
+.dots { display: flex; gap: 8px; }
+.dot { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--card); border: 2px solid var(--tile-sky); font-size: 1rem; }
+.dot.now { border-color: var(--blue); background: var(--blue); color: var(--card); }
+.dot.ok { background: var(--green); border-color: var(--green); color: var(--card); }
+.dot.no { background: var(--red); border-color: var(--red); color: var(--card); }
+.q-label { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; font-size: 1.15rem; flex-wrap: wrap; }
+.q-type { font-family: var(--display); color: var(--ink-soft); font-size: 1rem; }
+.q-text { font-size: clamp(1.4rem, 4.6vw, 1.9rem); line-height: 1.4; margin-bottom: 20px; }
+.opts { display: grid; gap: 10px; }
+.opt {
+  display: flex; align-items: center; gap: 12px; text-align: left;
+  font-family: var(--display); font-size: clamp(1.15rem, 3.8vw, 1.4rem);
+  padding: 14px 16px; border-radius: 16px; border: 3px solid transparent;
+}
+.opt .num { flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--card); display: grid; place-items: center; font-size: 1.1rem; }
+.opt:nth-child(4n+1) { background: var(--tile-pink); }
+.opt:nth-child(4n+2) { background: var(--tile-yellow); }
+.opt:nth-child(4n+3) { background: var(--tile-sky); }
+.opt:nth-child(4n+4) { background: var(--tile-lime); }
+.opt[aria-pressed="true"] { border-color: var(--ink); }
+.opt.right { border-color: var(--green); box-shadow: 0 0 0 3px var(--green); }
+.opt.wrong { border-color: var(--red); opacity: .75; }
+.opt:disabled { cursor: default; }
+.ox { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.ox .opt { justify-content: center; font-size: 4rem; padding: 18px 0; }
+.ox .opt:nth-child(1) { background: var(--blue-soft); color: var(--blue); }
+.ox .opt:nth-child(2) { background: var(--red-soft); color: var(--red); }
+.hint { color: var(--ink-soft); font-size: .95rem; margin: 10px 0 0; }
+.hint-btn { font-family: var(--display); font-size: 1.1rem; background: var(--lemon); color: var(--violet); border: 2px dashed var(--violet); border-radius: 999px; padding: 6px 16px; margin: -6px 0 16px; }
+.hint-box { font-family: var(--display); font-size: 1.2rem; line-height: 1.5; background: var(--lemon); color: var(--ink); border-radius: 16px; padding: 12px 16px; margin: -6px 0 16px; }
+.hint-box b { color: var(--violet); font-weight: 400; }
+.actions { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; }
+.actions .big-btn { flex: 1; }
+.feedback { margin-top: 18px; border-radius: 18px; padding: 14px 18px; font-family: var(--display); font-size: 1.3rem; line-height: 1.4; }
+.feedback.ok { background: var(--green-soft); color: var(--green); }
+.feedback.no { background: var(--red-soft); color: var(--red); }
+.feedback small { display: block; color: var(--ink); font-size: 1.05rem; }
+
+/* 결과 */
+.result { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.result .h.big { font-size: clamp(3rem, 14vw, 5rem); line-height: 1; }
+.result.win .h.big { color: var(--green); }
+.result.lose .h.big { color: var(--red); }
+.score { font-family: var(--display); font-size: 1.5rem; }
+.result p { margin: 0; font-size: 1.15rem; line-height: 1.5; }
+.result .actions { width: 100%; }
+.pop { animation: pop .5s cubic-bezier(.3,1.6,.5,1) both; }
+@keyframes pop { from { transform: scale(.6) rotate(-10deg); } to { transform: scale(1) rotate(-6deg); } }
+
+/* 명단 */
+.list-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.filter { display: flex; gap: 6px; flex-wrap: wrap; }
+.filter button { font-family: var(--display); font-size: 1rem; padding: 6px 12px; border-radius: 999px; border: 2px solid var(--tile-sky); background: var(--card); }
+.filter button[aria-pressed="true"] { background: var(--blue); color: var(--card); border-color: var(--blue); }
+.count { font-family: var(--display); color: var(--violet); font-size: 1.2rem; }
+.group { margin-top: 16px; }
+.group h3 { font-family: var(--display); font-weight: 400; font-size: 1.2rem; margin: 0 0 8px; color: var(--teal); }
+.names { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0; }
+.names li { background: var(--green-soft); border-radius: 12px; padding: 6px 12px; font-family: var(--display); font-size: 1.1rem; display: flex; align-items: center; gap: 6px; }
+.names li .del { border: 0; background: none; color: var(--red); font-size: 1rem; padding: 0 2px; }
+.empty { color: var(--ink-soft); text-align: center; padding: 24px 0; margin: 0; }
+.store-note { color: var(--ink-soft); font-size: .9rem; margin: 10px 0 0; }
+.confirm { margin-top: 10px; background: var(--red-soft); border-radius: 14px; padding: 10px 14px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-family: var(--display); }
+.confirm button { font-family: var(--display); border-radius: 10px; padding: 6px 12px; border: 0; }
+.confirm .yes { background: var(--red); color: var(--card); }
+.confirm .no { background: var(--card); }
+
+@media (max-width: 520px) {
+  .pick.cls { grid-template-columns: repeat(2, 1fr); }
+  .rules { grid-template-columns: 1fr; }
+  .bigR b { font-size: 4rem; }
+  .book-chips { font-size: 1.3rem; }
+}
+@media (prefers-reduced-motion: reduce) { .pop { animation: none; transform: rotate(-6deg); } .big-btn { transition: none; } }
+
+/* 체험부스 */
+.event-tag { margin: 0; text-align: center; font-family: var(--display); font-size: 1.1rem; line-height: 1.4; color: var(--teal); background: var(--blue-soft); border-radius: 14px; padding: 10px 14px; text-wrap: balance; }
+.books { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.book-btn { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left; padding: 12px 14px; background: var(--card); border: 2px solid var(--tile-sky); border-radius: 16px; min-width: 0; }
+.book-btn .book-grade { font-family: var(--display); font-size: .95rem; color: var(--ink-soft); }
+.book-btn .book-name { font-family: var(--display); font-size: 1.15rem; line-height: 1.3; }
+.book-btn[aria-pressed="true"] { background: var(--blue); border-color: var(--blue); color: var(--card); }
+.book-btn[aria-pressed="true"] .book-grade { color: var(--card); }
+@media (max-width: 620px) { .books { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header id="topHeader" style="display:flex;flex-direction:column;gap:16px;align-items:center">
+    <div class="made-by">필봉 <span class="ras"><span class="r">R</span><span class="a">A</span><span class="s">S</span></span> 자치회가 준비했어요!</div>
+    <span class="pilbong">필봉</span>
+    <div class="tiles" aria-label="필봉 키클 독서퀴즈">
+      <div class="tile-group"><div class="tile t1">키</div><div class="tile t2">클</div></div>
+      <div class="tile-group"><div class="tile t3">독</div><div class="tile t4">서</div><div class="tile t5">퀴</div><div class="tile t6">즈</div></div>
+    </div>
+  </header>
+
+  <!-- 1. 시작 화면 -->
+  <section id="home" style="display:flex;flex-direction:column;gap:18px">
+    <div class="card book">
+      <div class="bigR"><b>R</b><span>독서</span></div>
+      <div class="book-chips"><span class="chip pink">키클</span><span class="chip blue">독서퀴즈</span></div>
+      <h2 class="h book-title">읽은 책을 골라 퀴즈 도전!</h2>
+      <div class="rules">
+        <div class="rule">랜덤 3문제<small>고른 책에서 나와요</small></div>
+        <div class="rule">2문제 맞히면<small>성공!</small></div>
+        <div class="rule">어려우면<small>힌트 보기를 눌러요</small></div>
+      </div>
+    </div>
+
+    <form class="card form" id="startForm" novalidate>
+      <p class="event-tag">2026 화성오산 다이음 페스타 필봉초 체험부스용</p>
+      <div>
+        <span class="field-label" id="bLabel">책 고르기</span>
+        <div class="books" id="bookPick" role="group" aria-labelledby="bLabel"></div>
+      </div>
+      <div>
+        <label class="field-label" for="nameInput">이름</label>
+        <input class="name-input" id="nameInput" maxlength="10" autocomplete="off" placeholder="이름을 써 주세요">
+      </div>
+      <p class="err" id="formErr" role="alert"></p>
+      <button class="big-btn" type="submit">퀴즈 시작!</button>
+    </form>
+
+    <div class="sticker-bar">
+      <div class="stamp mini" aria-hidden="true"><div class="top">필봉 키클 한마당</div><div class="mid"><b>R</b><span>독서퀴즈<br>도전성공</span></div></div>
+      <div class="txt">
+        <h2 class="h">부스에서 성공한 친구 <span id="winCount">0</span>명</h2>
+        <p>성공하면 부스에서 스티커를 받아요</p>
+      </div>
+      <button class="link-btn" type="button" id="toList">명단 보기</button>
+    </div>
+  </section>
+
+  <!-- 2. 퀴즈 화면 -->
+  <section id="quiz" hidden>
+    <div class="card">
+      <div class="quiz-top">
+        <span class="who" id="who"></span>
+        <div class="dots" id="dots"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:18px" id="qCard"></div>
+  </section>
+
+  <!-- 3. 결과 화면 -->
+  <section id="result" hidden>
+    <div class="card result" id="resultCard"></div>
+  </section>
+
+  <!-- 4. 부스 성공 명단 -->
+  <section id="list" hidden>
+    <div class="card">
+      <div class="list-head">
+        <h2 class="h" style="font-size:1.6rem">다이음 페스타 부스 성공 명단</h2>
+        <span class="count" id="listCount"></span>
+      </div>
+      <div class="filter" id="bookFilter" style="margin-top:12px"></div>
+      <div id="listBody"></div>
+      <p class="store-note" id="storeNote"></p>
+      <div class="actions"><button class="big-btn ghost" type="button" id="listBack">처음으로</button></div>
+    </div>
+  </section>
+</div>
+
+<script>
+// ───────── 책과 문제 (학생용 1~6학년 퀴즈와 같은 문제 + 힌트) ─────────
+const BOOKS = [
+  { id: 1, label: "1학년 책", title: "김밥의 탄생 · 기적의 분실함", questions: [
+    { q: "<김밥의 탄생> 냉장고에 새로 들어온 친구가 아닌 것은?", type: "mc",
+      options: ["시금치", "달걀", "햄", "된장"], answer: 3,
+      hint: "김밥 속에 들어가지 않는 재료를 찾아보세요. 시금치, 달걀, 햄은 모두 김밥에 들어가요." },
+    { q: "<김밥의 탄생> 빈칸에 어울리는 말을 고르세요. \"친구들이 맛있는 음식이 되기 위해 노력했지만 (    ) 되었다.\"", type: "mc",
+      options: ["맛있게", "엉망진창이", "노랗게"], answer: 1,
+      hint: "'노력했지만'이라는 말은 잘 되지 않았다는 뜻이에요. 뒤죽박죽 어지러운 모양을 뜻하는 말을 골라요." },
+    { q: "<김밥의 탄생> 이웃 나라에서 이사 온 검은색 친구의 이름은 무엇인가요?", type: "mc",
+      options: ["김", "밥", "무"], answer: 0,
+      hint: "김밥을 쌀 때 겉을 감싸는 얇고 까만 친구예요." },
+    { q: "<김밥의 탄생> 김을 보고 친구들은 어떻게 했나요?", type: "mc",
+      options: ["좋아했다", "울었다", "무시했다"], answer: 2,
+      hint: "친구들은 처음에 김을 반겨 주지 않고 모른 척했어요." },
+    { q: "<김밥의 탄생> 냉바리오 장고고에 겨울이 찾아오자 친구들은 더 싱싱해졌다.", type: "ox", answer: 1,
+      hint: "겨울이 찾아오자 친구들은 시들시들해졌어요." },
+    { q: "<김밥의 탄생> 냉장고 친구들이 되고 싶었던 것은 맛있는 음식이다.", type: "ox", answer: 0,
+      hint: "친구들은 맛있는 음식이 되려고 열심히 노력했어요." },
+    { q: "<김밥의 탄생> 김은 무시하는 친구들과 친해지려고 노력하지 않았다.", type: "ox", answer: 1,
+      hint: "김은 친구들과 친해지려고 열심히 노력했어요." },
+    { q: "<김밥의 탄생> 먼저 서로 안아 주자고 한 건 밥이다.", type: "ox", answer: 1,
+      hint: "먼저 서로 안아 주자고 말한 친구는 김이에요." },
+    { q: "<김밥의 탄생> 김에게 안긴 친구들은 김에게 사과를 했다.", type: "ox", answer: 0,
+      hint: "김에게 안긴 친구들은 김에게 미안하다고 말했어요." },
+    { q: "<김밥의 탄생> 김은 친구들을 안고 주문을 외웠다.", type: "ox", answer: 0,
+      hint: "김은 친구들을 안고 \"킴쓰킴쓰 킴킴킴 김밥되어불쓰!\" 하고 주문을 외웠어요." },
+    { q: "<기적의 분실함> 주인공이 잃어버린 가방의 이름은 무엇인가요?", type: "mc",
+      options: ["옐로우", "레드", "블루"], answer: 1,
+      hint: "빨간색을 영어로 말하면 무엇일까요? 이 가방은 나중에 성호에게 다시 돌아와요." },
+    { q: "<기적의 분실함> 스마트폰 아가씨는 영은이한테 돌아가는 걸 좋아한다.", type: "ox", answer: 1,
+      hint: "영은이가 일을 너무 많이 시켜서 스마트폰 아가씨는 돌아가기 싫어했어요." },
+    { q: "<기적의 분실함> 손목시계의 주인은 창욱이다.", type: "ox", answer: 0,
+      hint: "손목시계는 창욱이의 물건이 맞아요." },
+    { q: "<기적의 분실함> 창욱이는 할머니를 그리워한다.", type: "ox", answer: 1,
+      hint: "창욱이가 그리워한 사람은 할머니가 아니라 할아버지예요." },
+    { q: "<기적의 분실함> 엄마는 성호를 위해 그린을 만들어 주려고 한다.", type: "ox", answer: 0,
+      hint: "엄마는 성호를 위해 정말로 그린을 만들어 주려고 해요." },
+    { q: "<기적의 분실함> 고추잠자리가 성호를 화장실로 데려왔다.", type: "ox", answer: 1,
+      hint: "고추잠자리가 성호를 데려간 곳은 화장실이 아니라 분실함이에요." },
+    { q: "<기적의 분실함> 창욱이와 성호는 친해졌다.", type: "ox", answer: 0,
+      hint: "이야기 끝에서 창욱이와 성호는 사이좋은 친구가 되었어요." },
+    { q: "<기적의 분실함> 레드는 성호에게 돌아왔다.", type: "ox", answer: 0,
+      hint: "잃어버렸던 가방 레드는 다시 성호에게 돌아왔어요." },
+  ] },
+  { id: 2, label: "2학년 책", title: "슈퍼 토끼", questions: [
+    { q: "<슈퍼 토끼>의 주인공 토끼 이름은 무엇인가요?", type: "mc",
+      options: ["깡충이", "재빨라", "토순이", "번개"], answer: 1,
+      hint: "이 토끼는 이름처럼 아주 빨리 달려요. '재빠르다'와 비슷한 이름이에요." },
+    { q: "재빨라에게 달리기 경주를 신청한 거북이의 이름은 무엇인가요?", type: "mc",
+      options: ["느림이", "엉금이", "꾸물이", "거북이"], answer: 2,
+      hint: "느릿느릿 움직이는 모양을 '꾸물꾸물'이라고 해요." },
+    { q: "거북이와의 달리기 경주에서 진 재빨라는 다시는 무엇을 하지 않겠다고 마음먹었나요?", type: "mc",
+      options: ["달리기", "노래하기", "잠자기", "밥 먹기"], answer: 0,
+      hint: "재빨라는 경주에서 진 뒤로 그 경주에서 하던 일을 그만두었어요." },
+    { q: "달리기를 그만둔 재빨라의 모습은 어떻게 변했나요?", type: "mc",
+      options: ["몸이 더욱 튼튼해졌어요.", "키가 쑥쑥 자랐어요.", "털이 반짝반짝 빛났어요.", "눈이 침침해지고 털도 빠졌어요."], answer: 3,
+      hint: "좋아하는 일을 그만두니 몸이 점점 약해졌어요. 좋지 않은 변화를 골라요." },
+    { q: "병원에 가던 재빨라가 생각지도 않게 참여하게 된 것은 무엇인가요?", type: "mc",
+      options: ["노래 대회", "달리기 대회", "그림 그리기 대회", "수영 대회"], answer: 1,
+      hint: "재빨라는 이 대회 덕분에 다시 달리게 되었어요." },
+    { q: "재빨라가 가장 행복하다고 느끼는 순간은 언제인가요?", type: "mc",
+      options: ["맛있는 음식을 먹을 때", "낮잠을 잘 때", "신나게 달릴 때", "텔레비전을 볼 때"], answer: 2,
+      hint: "재빨라는 달리기를 정말 좋아하는 토끼예요." },
+    { q: "재빨라에게 해 주면 가장 어울리는 응원의 말은 무엇인가요?", type: "mc",
+      options: ["한 번 졌으니 다시는 달리지 마!", "다른 친구와 비교하며 살아야 해!", "실수하면 무조건 포기해야 해!", "이기고 지는 것보다 좋아하는 일을 즐기는 게 중요해!"], answer: 3,
+      hint: "다른 보기는 모두 힘이 빠지는 말이에요. 듣고 힘이 나는 말을 골라요." },
+    { q: "<슈퍼 토끼>를 쓰고 그림을 그린 작가는 누구인가요?", type: "mc",
+      options: ["백희나", "유설화", "안녕달", "이지은"], answer: 1,
+      hint: "작가 이름은 '유'로 시작해요." },
+  ] },
+  { id: 3, label: "3학년 책", title: "만복이네 떡집", questions: [
+    { q: "만복이는 초등학교 몇 학년인가요?", type: "mc",
+      options: ["1학년", "2학년", "3학년", "4학년"], answer: 2,
+      hint: "숫자 3이 들어간 학년이에요." },
+    { q: "다음 중 만복이의 별명이 아닌 것은?", type: "mc",
+      options: ["욕쟁이", "심술쟁이", "깡패", "방귀쟁이"], answer: 3,
+      hint: "만복이는 말을 험하게 하고 심술을 부렸어요. 냄새와 관련된 별명은 없었어요." },
+    { q: "만복이는 부잣집 ○○ 아들로 태어났습니다. ○○에 들어갈 말은?", type: "mc",
+      options: ["첫째", "둘째", "셋째", "넷째"], answer: 3,
+      hint: "숫자 4를 나타내는 말이에요." },
+    { q: "만복이가 먹은 떡은 모두 몇 개일까요?", type: "mc",
+      options: ["4개", "5개", "6개", "7개"], answer: 1,
+      hint: "한 손의 손가락 개수와 같아요." },
+    { q: "만복이가 두 번째로 먹은 떡으로, 허파에 바람이 든 것처럼 비실비실 웃게 되는 떡은 무엇일까요?", type: "mc",
+      options: ["쑥떡", "꿀떡", "바람떡", "무지개떡"], answer: 2,
+      hint: "허파에 '바람'이 든 것처럼 웃게 되는 떡이에요." },
+    { q: "만복이는 이 떡을 먹고 나서 입안이 척 달라붙게 됩니다. 이 떡은 무엇인가요?", type: "mc",
+      options: ["찹쌀떡", "바람떡", "꿀떡", "백설기"], answer: 0,
+      hint: "쫀득쫀득해서 입에 달라붙는 떡이에요." },
+    { q: "만복이가 찹쌀떡을 먹으려면 착한 일 한 개가 필요했어요. 만복이가 한 착한 일은 무엇일까요?", type: "mc",
+      options: ["색연필이 없는 친구에게 색연필을 빌려주었다.", "찰흙을 반 떼어 친구에게 주었다.", "교실 바닥에 떨어진 종이를 주워서 버렸다."], answer: 1,
+      hint: "만복이는 만들기 시간에 쓰는 말랑말랑한 재료를 친구와 나누었어요." },
+    { q: "만복이가 은지에게 빌려준 악기는?", type: "mc",
+      options: ["트라이앵글", "카바사", "리코더", "탬버린"], answer: 3,
+      hint: "흔들거나 손바닥으로 치면 찰랑찰랑 소리가 나는 동그란 악기예요." },
+    { q: "만복이가 바람떡을 입에 넣자 무슨 소리가 났나요?", type: "mc",
+      options: ["휘휘휘, 휘파람 소리", "딸랑딸랑, 종소리", "뿌우, 나팔 소리"], answer: 0,
+      hint: "'바람'떡이니까 입에서 바람 소리가 났어요." },
+    { q: "쑥떡을 먹으면 저절로 재미있는 이야기가 몽실몽실 떠오른다.", type: "ox", answer: 1,
+      hint: "쑥떡을 먹어서 이야기가 떠오르는 것은 아니었어요." },
+    { q: "만복이와 장군이가 급식실에서 싸운 이유는 만복이가 ○○○을 했기 때문이에요. ○○○은 무엇인가요?", type: "mc",
+      options: ["거짓말", "새치기", "고자질", "말대꾸"], answer: 1,
+      hint: "줄을 서 있는데 앞에 끼어드는 행동이에요." },
+    { q: "만복이가 먹지 않은 떡 두 개를 고르세요.", type: "multi",
+      options: ["가래떡", "쑥떡", "백설기", "찹쌀떡"], answers: [0, 2],
+      hint: "만복이는 쑥떡과 찹쌀떡을 먹었어요. 나머지 두 개를 골라요." },
+    { q: "<만복이네 떡집>을 쓴 작가의 이름은 무엇인가요?", type: "mc",
+      options: ["이리리", "박리리", "최리리", "김리리"], answer: 3,
+      hint: "작가의 성은 김밥의 '김'이에요." },
+    { q: "만복이의 성은 무엇인가요?", type: "mc",
+      options: ["박", "이", "최", "김"], answer: 3,
+      hint: "책을 쓴 김리리 작가와 성이 같아요." },
+    { q: "무지개떡의 가격은 얼마인가요?", type: "mc",
+      options: ["아이들 웃음 10개", "아이들 웃음 15개", "아이들 웃음 20개", "아이들 웃음 30개"], answer: 2,
+      hint: "10개의 두 배예요." },
+    { q: "만복이는 친구들을 칭찬해 주었어요. 무슨 떡을 먹고 그렇게 변했나요?", type: "mc",
+      options: ["꿀떡", "쑥떡", "백설기", "찹쌀떡"], answer: 0,
+      hint: "꿀처럼 달콤한 말을 하게 되는 떡이에요." },
+  ] },
+  { id: 4, label: "4학년 책", title: "오늘은 용돈 받는 날", questions: [
+    { q: "<오늘은 용돈 받는 날>을 쓴 작가는 누구인가요?", type: "mc",
+      options: ["백희나", "김리리", "연유진", "이지은"], answer: 2,
+      hint: "작가 이름은 '연'으로 시작해요." },
+    { q: "현우가 처음으로 받은 용돈은 얼마인가요?", type: "mc",
+      options: ["1,000원", "3,000원", "5,000원", "10,000원"], answer: 2,
+      hint: "천 원짜리 다섯 장과 같은 돈이에요." },
+    { q: "현우가 용돈을 받은 뒤 인형뽑기에 써 버린 돈은 모두 얼마인가요?", type: "mc",
+      options: ["1,000원", "2,000원", "3,000원", "5,000원"], answer: 3,
+      hint: "현우는 처음 받은 용돈을 인형뽑기에 몽땅 써 버렸어요." },
+    { q: "현우가 다경이의 생일 선물로 고민하다가 고른 것은 무엇인가요?", type: "mc",
+      options: ["예쁜 머리핀", "20색 어린이용 그림물감", "귀여운 인형", "색연필 세트"], answer: 1,
+      hint: "붓에 묻혀 그림을 칠할 때 쓰는 것이에요." },
+    { q: "현우가 일품베이커리에 가기 위해 모으려고 했던 목표 금액은 얼마인가요?", type: "mc",
+      options: ["10,000원", "20,000원", "30,000원", "50,000원"], answer: 2,
+      hint: "만 원짜리 세 장이에요." },
+    { q: "현우가 원하는 용돈 기입장을 사기 위해 엄마와 함께 찾아간 대형 전통 시장은 어디인가요?", type: "mc",
+      options: ["광장시장", "동대문시장", "통인시장", "남대문시장"], answer: 3,
+      hint: "동, 서, 남, 북 중 '남'쪽 큰 문의 이름을 딴 시장이에요." },
+    { q: "내가 가진 것을 어려운 사람들에게 나누어 주는 일을 무엇이라고 하나요?", type: "mc",
+      options: ["저축", "기부", "소비", "투자"], answer: 1,
+      hint: "어려운 이웃을 돕기 위해 내놓는 일이에요. '기'로 시작해요." },
+    { q: "은행에 돈을 맡겨 안전하게 보관하고 돈을 모으는 일을 무엇이라고 하나요?", type: "mc",
+      options: ["낭비", "소비", "저축", "대출"], answer: 2,
+      hint: "돼지 저금통에 돈을 모으는 것도 이것이에요." },
+    { q: "스마트카드나 스마트폰 애플리케이션 등을 통해 사용하는 디지털 형태의 돈을 무엇이라고 하나요?", type: "mc",
+      options: ["지폐", "동전", "상품권", "전자 화폐"], answer: 3,
+      hint: "종이돈이나 동전이 아니라 '전자'로 된 돈이에요." },
+    { q: "현우가 단짝 친구 준호와 함께 지하철을 타고 찾아간 일품베이커리가 있는 역은 어디인가요?", type: "mc",
+      options: ["세마역", "홍대입구역", "사당역", "강남역"], answer: 1,
+      hint: "이름이 '입구역'으로 끝나는 역이에요." },
+  ] },
+  { id: 5, label: "5학년 책", title: "유튜브 전쟁", questions: [
+    { q: "주인공이 즐겨 보던 유튜브 생방송의 이름은 무엇인가요?", type: "mc",
+      options: ["꿈꾸는 제제의 다락방", "신나는 제제의 놀이터", "행복한 마리의 방송국", "비밀스러운 유튜브 교실"], answer: 0,
+      hint: "방송 이름에 '꿈'과 '다락방'이 들어가요." },
+    { q: "책에 등장하는 고양이 두 마리의 이름은 무엇인가요?", type: "mc",
+      options: ["초코와 바닐라", "나비와 구름", "슈슈와 치즈", "콩이와 두부"], answer: 2,
+      hint: "한 마리는 피자 위에 올라가는 노란 음식과 이름이 같아요." },
+    { q: "호진이가 운영하는 유튜브 채널의 이름은 무엇인가요?", type: "mc",
+      options: ["장난꾸러기 호진이", "용감한 호진이(용호)", "신나는 호진TV", "호진이의 비밀일기"], answer: 1,
+      hint: "줄여서 '용호'라고 불러요." },
+    { q: "유진이가 운영하는 유튜브 채널의 이름은 무엇인가요?", type: "mc",
+      options: ["고양이 탐험대", "유진이의 하루", "행복한 동물 친구들", "통조림 집사"], answer: 3,
+      hint: "고양이를 돌보는 사람을 '집사'라고 불러요." },
+    { q: "호진이가 장난감을 넣었던 국은 무엇인가요?", type: "mc",
+      options: ["된장국", "콩나물국", "미역국", "북엇국"], answer: 2,
+      hint: "생일날 아침에 먹는 국이에요." },
+    { q: "고양이를 입양하겠다며 마리에게 연락처를 보낸 사람은 모두 몇 명인가요?", type: "mc",
+      options: ["8명", "10명", "12명", "15명"], answer: 2,
+      hint: "1년의 달 수와 같아요." },
+    { q: "마리가 유튜브를 보고 계속 먹어 보고 싶었던 음식은 무엇인가요?", type: "mc",
+      options: ["간장계란밥", "치즈볶음밥", "김치볶음밥", "달걀샌드위치"], answer: 0,
+      hint: "따뜻한 밥에 간장과 계란을 넣어 비벼 먹어요." },
+    { q: "계란 흰자에 거품을 내고 설탕을 섞은 뒤 낮은 온도에서 한 시간 동안 구워 만드는 쿠키는 무엇인가요?", type: "mc",
+      options: ["초코칩 쿠키", "버터 쿠키", "땅콩 쿠키", "머랭 쿠키"], answer: 3,
+      hint: "계란 흰자 거품을 '머랭'이라고 불러요." },
+    { q: "호진이와 유진이가 고양이를 키울 수 없는 이유는 무엇인가요?", type: "mc",
+      options: ["집이 너무 좁아서", "아빠에게 털 알레르기가 있어서", "엄마가 고양이를 무서워해서", "고양이를 돌볼 시간이 없어서"], answer: 1,
+      hint: "가족 중 한 사람이 고양이 털 때문에 재채기를 해요." },
+    { q: "호진이와 유진이는 어떤 관계인가요?", type: "mc",
+      options: ["사촌 형제", "같은 반 친구", "쌍둥이 형제", "이웃집 친구"], answer: 2,
+      hint: "호진이와 유진이는 같은 날 태어났어요." },
+  ] },
+  { id: 6, label: "6학년 책", title: "몬스터 차일드", questions: [
+    { q: "하늬와 산들이의 성은 무엇일까요?", type: "mc",
+      options: ["김", "이", "강", "오"], answer: 3,
+      hint: "주인공의 이름은 '오하늬'예요." },
+    { q: "하늬는 몇 학년인가요?", type: "mc",
+      options: ["3학년", "4학년", "5학년", "6학년"], answer: 3,
+      hint: "초등학교에서 가장 높은 학년이에요." },
+    { q: "연우가 변한 모습은 무슨 색 눈인가요?", type: "mc",
+      options: ["노란 눈", "파란 눈", "빨간 눈", "검정 눈"], answer: 1,
+      hint: "맑은 하늘이나 바다와 같은 색이에요." },
+    { q: "하늬의 변이는 어떨 때 일어나나요?", type: "mc",
+      options: ["잠이 올 때", "스트레스 받을 때", "몸이 성장할 때", "보름달이 뜰 때"], answer: 1,
+      hint: "마음이 힘들고 답답할 때 변이가 일어나요." },
+    { q: "산들이와 승아가 혜지네 과수원에서 과일나무를 뽑은 이유는 무엇인가요?", type: "mc",
+      options: ["과일이 먹고 싶어서", "덫에 걸린 것에 복수하려고", "혜지가 연우를 욕해서", "재미 삼아 충동적으로"], answer: 2,
+      hint: "두 친구는 연우 때문에 화가 났어요." },
+    { q: "MCS는 실제로 '뮤턴트 캔서로스 신드롬'의 약자예요. 그런데 사람들은 이 병의 이름을 어떻게 바꾸어 부르나요?", type: "mc",
+      options: ["몬스터 칠드런 신드롬", "변이 유전자 소유자", "매드 차일드 신드롬", "몬스터 차일드 신드롬"], answer: 3,
+      hint: "이 책의 제목이 들어간 이름이에요." },
+    { q: "오하늬에게 변이가 나타날 때의 증상이 아닌 것은?", type: "mc",
+      options: ["귀 뒤가 찌릿거린다.", "속이 좋지 않다.", "잠이 온다."], answer: 2,
+      hint: "변이가 나타날 때는 귀 뒤가 찌릿하고 속이 안 좋아요. 나머지 하나를 골라요." },
+    { q: "마지막으로 하늬와 만나 놀 때 연우가 한 말이에요. \"하늬야, 나는 네가 꼭 하늘이 준 (    ) 같아.\" 빈칸에 들어갈 말은?", type: "mc",
+      options: ["기회", "선물", "친구"], answer: 1,
+      hint: "생일이나 크리스마스에 받는 것이에요." },
+    { q: "연우가 하늬에게 마지막으로 준 선물은 무엇인가요?", type: "mc",
+      options: ["손거울", "편지", "가방", "책"], answer: 0,
+      hint: "얼굴을 비춰 보는 작은 물건이에요." },
+    { q: "하늬는 버스에서 주민들이 시위하는 모습을 보았어요. 주민들은 MCS를 위한 어떤 시설을 세우는 것에 반대했나요?", type: "mc",
+      options: ["학교", "쓰레기 처리장", "치료센터", "체육관"], answer: 2,
+      hint: "아픈 사람을 낫게 해 주는 곳이에요." },
+  ] },
+];
+const PICK = 3, PASS = 2;
+const NUMS = ["①", "②", "③", "④", "⑤"];
+
+// ───────── 상태 ─────────
+const state = { book: null, name: "", picked: [], idx: 0, results: [], selected: [] };
+let winners = [];      // {id, book, name, at}
+
+const $ = (id) => document.getElementById(id);
+const show = (id) => { for (const s of ["home", "quiz", "result", "list"]) $(s).hidden = s !== id; $("topHeader").hidden = id === "quiz"; window.scrollTo(0, 0); };
+const el = (tag, props = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)) {
+    if (k === "class") n.className = v; else if (k === "text") n.textContent = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v);
+  }
+  for (const k of kids) if (k != null) n.append(k);
+  return n;
+};
+const today = () => { const d = new Date(); return `${d.getMonth() + 1}. ${d.getDate()}.`; };
+const bookOf = (id) => BOOKS.find((b) => b.id === id);
+
+// ───────── 시작 화면: 책 고르기 ─────────
+for (const b of BOOKS) {
+  const btn = el("button", { type: "button", class: "book-btn", "aria-pressed": "false", id: `book-${b.id}` },
+    el("span", { class: "book-grade", text: b.label }), el("span", { class: "book-name", text: b.title }));
+  btn.addEventListener("click", () => {
+    state.book = b.id;
+    for (const x of $("bookPick").children) x.setAttribute("aria-pressed", String(x === btn));
+    $("formErr").textContent = "";
+  });
+  $("bookPick").append(btn);
+}
+
+$("startForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = $("nameInput").value.trim();
+  if (!state.book) return ($("formErr").textContent = "읽은 책을 골라 주세요.");
+  if (!name) { $("nameInput").focus(); return ($("formErr").textContent = "이름을 써 주세요."); }
+  state.name = name;
+  startQuiz();
+});
+
+// ───────── 퀴즈 ─────────
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const questions = () => bookOf(state.book).questions;
+
+function startQuiz() {
+  state.picked = shuffle(questions().map((_, i) => i)).slice(0, PICK);
+  state.idx = 0; state.results = [];
+  $("who").textContent = `${state.name} · <${bookOf(state.book).title}>`;
+  show("quiz");
+  renderQuestion();
+}
+
+function renderDots() {
+  const box = $("dots"); box.replaceChildren();
+  for (let i = 0; i < PICK; i++) {
+    let cls = "dot";
+    if (i < state.results.length) cls += state.results[i] ? " ok" : " no";
+    else if (i === state.idx) cls += " now";
+    box.append(el("span", { class: cls, text: i < state.results.length ? (state.results[i] ? "O" : "X") : String(i + 1) }));
+  }
+}
+
+function renderQuestion() {
+  renderDots();
+  const q = questions()[state.picked[state.idx]];
+  state.selected = [];
+  const card = $("qCard"); card.replaceChildren();
+  const typeName = { mc: "골라요", ox: "O / X", multi: "2개 골라요" }[q.type];
+  card.append(
+    el("div", { class: "q-label" }, el("span", { class: "chip blue", text: `${state.idx + 1}번 문제` }), el("span", { class: "q-type", text: typeName })),
+    el("h2", { class: "h q-text", text: q.q })
+  );
+
+  // 힌트: 처음엔 숨겨 두고, "힌트 보기"를 누른 사람에게만 보여 줘요.
+  if (q.hint) {
+    const hintBox = el("p", { class: "hint-box", role: "status" }, el("b", { text: "힌트 " }), q.hint);
+    hintBox.hidden = true;
+    const hintBtn = el("button", { class: "hint-btn", type: "button", text: "힌트 보기" });
+    hintBtn.addEventListener("click", () => { hintBox.hidden = false; hintBtn.remove(); });
+    card.append(hintBtn, hintBox);
+  }
+
+  const actions = el("div", { class: "actions" });
+  const check = el("button", { class: "big-btn", type: "button", text: "정답 확인" });
+  check.disabled = true;
+
+  if (q.type === "mc" || q.type === "multi") {
+    const box = el("div", { class: "opts" });
+    q.options.forEach((t, i) => {
+      const b = el("button", { class: "opt", type: "button", "aria-pressed": "false" }, el("span", { class: "num", text: String(i + 1) }), el("span", { text: t }));
+      b.addEventListener("click", () => {
+        if (q.type === "mc") state.selected = [i];
+        else {
+          const at = state.selected.indexOf(i);
+          if (at >= 0) state.selected.splice(at, 1);
+          else { if (state.selected.length >= 2) state.selected.shift(); state.selected.push(i); }
+        }
+        [...box.children].forEach((x, j) => x.setAttribute("aria-pressed", String(state.selected.includes(j))));
+        check.disabled = q.type === "multi" ? state.selected.length !== 2 : state.selected.length === 0;
+      });
+      box.append(b);
+    });
+    card.append(box);
+    if (q.type === "multi") card.append(el("p", { class: "hint", text: "두 개를 모두 골라야 정답 확인을 누를 수 있어요." }));
+  } else if (q.type === "ox") {
+    const box = el("div", { class: "opts ox" });
+    ["O", "X"].forEach((t, i) => {
+      const b = el("button", { class: "opt", type: "button", "aria-pressed": "false", "aria-label": t === "O" ? "맞아요 O" : "틀려요 X", text: t });
+      b.addEventListener("click", () => {
+        state.selected = [i];
+        [...box.children].forEach((x, j) => x.setAttribute("aria-pressed", String(j === i)));
+        check.disabled = false;
+      });
+      box.append(b);
+    });
+    card.append(box);
+  }
+
+  check.addEventListener("click", () => grade(q, card, actions));
+  actions.append(check);
+  card.append(actions);
+}
+
+function isRight(q) {
+  if (q.type === "multi") return state.selected.length === 2 && q.answers.every((a) => state.selected.includes(a));
+  return state.selected[0] === q.answer;
+}
+
+function answerLabel(q) {
+  if (q.type === "ox") return q.answer === 0 ? "O" : "X";
+  if (q.type === "multi") return q.answers.map((a) => `${NUMS[a]} ${q.options[a]}`).join(", ");
+  return `${NUMS[q.answer]} ${q.options[q.answer]}`;
+}
+
+function grade(q, card, actions) {
+  const ok = isRight(q);
+  card.querySelector(".hint-btn")?.remove();
+  state.results.push(ok);
+  card.querySelectorAll(".opt").forEach((b, i) => {
+    b.disabled = true;
+    const correct = q.type === "multi" ? q.answers.includes(i) : i === q.answer;
+    if (correct) b.classList.add("right");
+    else if (state.selected.includes(i)) b.classList.add("wrong");
+  });
+  renderDots();
+
+  const fb = el("div", { class: "feedback " + (ok ? "ok" : "no"), role: "status" },
+    ok ? "딩동댕! 정답이에요." : "아쉬워요!",
+    ok ? null : el("small", { text: `정답은 ${answerLabel(q)} 이에요.` }));
+  actions.before(fb);
+
+  const last = state.idx === PICK - 1;
+  const next = el("button", { class: "big-btn green", type: "button", text: last ? "결과 보기" : "다음 문제" });
+  next.addEventListener("click", () => { if (last) finish(); else { state.idx++; renderQuestion(); } });
+  actions.replaceChildren(next);
+  next.focus();
+}
+
+// ───────── 결과 ─────────
+async function finish() {
+  const score = state.results.filter(Boolean).length;
+  const win = score >= PASS;
+  const card = $("resultCard");
+  card.className = "card result " + (win ? "win" : "lose");
+  card.replaceChildren();
+
+  if (win) {
+    card.append(
+      el("h2", { class: "h big", text: "성공!" }),
+      el("div", { class: "score", text: `${PICK}문제 중 ${score}문제 맞혔어요` }),
+      el("div", { class: "stamp pop" },
+        el("div", { class: "top", text: "필봉 키클 한마당" }),
+        el("div", { class: "mid" }, el("b", { text: "R" }), el("span", {}, "독서퀴즈", el("br"), "도전성공")),
+        el("div", { class: "date", text: today() })),
+      el("p", { text: `${state.name}, 축하해요! 부스 선생님께 스티커를 받으세요.` })
+    );
+    const saved = await saveWinner();
+    card.append(el("p", { class: saved ? "" : "err",
+      text: saved ? "부스 성공 명단에 이름을 올렸어요." : "명단에 저장하지 못했어요. 부스 선생님께 알려 주세요." }));
+  } else {
+    card.append(
+      el("h2", { class: "h big", text: "실패" }),
+      el("div", { class: "score", text: `${PICK}문제 중 ${score}문제 맞혔어요` }),
+      el("p", { text: `${state.name}, 아깝다! 2문제를 맞히면 성공이에요. 힌트 보기를 눌러서 다시 도전해 봐요.` })
+    );
+  }
+  const actions = el("div", { class: "actions" });
+  if (!win) actions.append(el("button", { class: "big-btn", type: "button", text: "다시 도전", onclick: startQuiz }));
+  actions.append(el("button", { class: "big-btn " + (win ? "" : "ghost"), type: "button", text: "처음으로", onclick: resetHome }));
+  card.append(actions);
+  show("result");
+}
+
+function resetHome() {
+  state.book = null; state.name = "";
+  $("nameInput").value = ""; $("formErr").textContent = "";
+  document.querySelectorAll("#bookPick button").forEach((b) => b.setAttribute("aria-pressed", "false"));
+  show("home");
+}
+
+// ───────── 부스 성공 명단 (Supabase의 festa_winners 표, 학생 명단과 따로) ─────────
+const SUPABASE_URL = "https://simowynbbpisnlmdlkhe.supabase.co";
+const SUPABASE_KEY = "sb_publishable_UfzvR1LBAdiUNdqVwDhxsw_--u-lCQI";   // 브라우저용 공개 키
+const API = SUPABASE_URL + "/rest/v1/festa_winners";
+const HEADERS = { apikey: SUPABASE_KEY, "Content-Type": "application/json" };
+
+async function loadWinners() {
+  try {
+    const r = await fetch(API + "?select=id,book,name,created_at&order=created_at.asc", { headers: HEADERS });
+    if (!r.ok) throw new Error(r.status + " " + (await r.text()));
+    winners = (await r.json()).map((w) => ({ ...w, at: w.created_at }));
+    $("storeNote").textContent = "부스 명단은 학생용 명단과 따로 저장돼요. 잘못 들어간 이름은 Supabase 대시보드의 Table Editor에서 festa_winners 표를 열어 지워 주세요.";
+  } catch (e) {
+    console.warn("명단 불러오기 실패", e);
+    $("storeNote").textContent = "명단을 불러오지 못했어요. 인터넷 연결을 확인하고 다시 열어 주세요.";
+  }
+  renderWinners();
+}
+
+// 부스에서는 이름이 같은 방문객이 많을 수 있어서, 성공할 때마다 한 줄씩 저장해요.
+async function saveWinner() {
+  try {
+    const r = await fetch(API, {
+      method: "POST",
+      headers: { ...HEADERS, Prefer: "return=minimal" },
+      body: JSON.stringify({ book: state.book, name: state.name }),
+    });
+    if (!r.ok) throw new Error(r.status + " " + (await r.text()));
+    loadWinners();
+    return true;
+  } catch (e) {
+    console.warn("성공 기록 저장 실패", e);
+    return false;
+  }
+}
+
+let filterBook = 0;
+function renderWinners() {
+  $("winCount").textContent = winners.length;
+  const f = $("bookFilter"); f.replaceChildren();
+  [{ id: 0, label: "전체" }, ...BOOKS].forEach((b) => {
+    f.append(el("button", { type: "button", "aria-pressed": String(filterBook === b.id), text: b.label,
+      onclick: () => { filterBook = b.id; renderWinners(); } }));
+  });
+  const shown = winners.filter((w) => !filterBook || w.book === filterBook);
+  $("listCount").textContent = `${shown.length}명 성공`;
+  const body = $("listBody"); body.replaceChildren();
+  if (!shown.length) { body.append(el("p", { class: "empty", text: "아직 성공한 친구가 없어요. 첫 번째 주인공이 되어 보세요!" })); return; }
+  for (const b of BOOKS) {
+    const list = shown.filter((w) => w.book === b.id);
+    if (!list.length) continue;
+    const ul = el("ul", { class: "names" });
+    for (const w of list) ul.append(el("li", { text: w.name }));
+    body.append(el("div", { class: "group" }, el("h3", { text: `${b.label} <${b.title}> · ${list.length}명` }), ul));
+  }
+}
+
+$("toList").addEventListener("click", () => { renderWinners(); show("list"); loadWinners(); });
+$("listBack").addEventListener("click", () => show("home"));
+
+$("storeNote").textContent = "명단을 불러오는 중이에요…";
+renderWinners();
+loadWinners();
+</script>
+</body>
+</html>
