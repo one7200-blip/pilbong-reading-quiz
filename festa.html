@@ -258,8 +258,8 @@ button { cursor: pointer; }
         <div class="books" id="bookPick" role="group" aria-labelledby="bLabel"></div>
       </div>
       <div>
-        <label class="field-label" for="nameInput">이름</label>
-        <input class="name-input" id="nameInput" maxlength="10" autocomplete="off" placeholder="이름을 써 주세요">
+        <label class="field-label" for="nameInput">이름 또는 별명</label>
+        <input class="name-input" id="nameInput" maxlength="10" autocomplete="off" placeholder="이름 또는 별명을 입력해 주세요">
       </div>
       <p class="err" id="formErr" role="alert"></p>
       <button class="big-btn" type="submit">퀴즈 시작!</button>
@@ -561,7 +561,7 @@ $("startForm").addEventListener("submit", (e) => {
   e.preventDefault();
   const name = $("nameInput").value.trim();
   if (!state.book) return ($("formErr").textContent = "읽은 책을 골라 주세요.");
-  if (!name) { $("nameInput").focus(); return ($("formErr").textContent = "이름을 써 주세요."); }
+  if (!name) { $("nameInput").focus(); return ($("formErr").textContent = "이름 또는 별명을 입력해 주세요."); }
   state.name = name;
   startQuiz();
 });
