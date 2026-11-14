@@ -166,9 +166,6 @@ button { cursor: pointer; }
 .ox .opt:nth-child(1) { background: var(--blue-soft); color: var(--blue); }
 .ox .opt:nth-child(2) { background: var(--red-soft); color: var(--red); }
 .hint { color: var(--ink-soft); font-size: .95rem; margin: 10px 0 0; }
-.hint-btn { font-family: var(--display); font-size: 1.1rem; background: var(--lemon); color: var(--violet); border: 2px dashed var(--violet); border-radius: 999px; padding: 6px 16px; margin: -6px 0 16px; }
-.hint-box { font-family: var(--display); font-size: 1.2rem; line-height: 1.5; background: var(--lemon); color: var(--ink); border-radius: 16px; padding: 12px 16px; margin: -6px 0 16px; }
-.hint-box b { color: var(--violet); font-weight: 400; }
 .actions { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; }
 .actions .big-btn { flex: 1; }
 .feedback { margin-top: 18px; border-radius: 18px; padding: 14px 18px; font-family: var(--display); font-size: 1.3rem; line-height: 1.4; }
@@ -302,47 +299,29 @@ button { cursor: pointer; }
 const QUESTIONS = [
   // <김밥의 탄생>
   { q: "냉장고에 새로 들어온 친구가 아닌 것은?", type: "mc",
-    options: ["시금치", "달걀", "햄", "된장"], answer: 3,
-    hint: "김밥 속에 들어가지 않는 재료를 찾아보세요. 시금치, 달걀, 햄은 모두 김밥에 들어가요." },
+    options: ["시금치", "달걀", "햄", "된장"], answer: 3 },
   { q: "빈칸에 어울리는 말을 고르세요. \"친구들이 맛있는 음식이 되기 위해 노력했지만 (    ) 되었다.\"", type: "mc",
-    options: ["맛있게", "엉망진창이", "노랗게"], answer: 1,
-    hint: "'노력했지만'이라는 말은 잘 되지 않았다는 뜻이에요. 뒤죽박죽 어지러운 모양을 뜻하는 말을 골라요." },
+    options: ["맛있게", "엉망진창이", "노랗게"], answer: 1 },
   { q: "이웃 나라에서 이사 온 검은색 친구의 이름은 무엇인가요?", type: "mc",
-    options: ["김", "밥", "무"], answer: 0,
-    hint: "김밥을 쌀 때 겉을 감싸는 얇고 까만 친구예요." },
+    options: ["김", "밥", "무"], answer: 0 },
   { q: "김을 보고 친구들은 어떻게 했나요?", type: "mc",
-    options: ["좋아했다", "울었다", "무시했다"], answer: 2,
-    hint: "친구들은 처음에 김을 반겨 주지 않고 모른 척했어요." },
-  { q: "냉바리오 장고고에 겨울이 찾아오자 친구들은 더 싱싱해졌다.", type: "ox", answer: 1,
-    hint: "겨울이 찾아오자 친구들은 시들시들해졌어요." },
-  { q: "냉장고 친구들이 되고 싶었던 것은 맛있는 음식이다.", type: "ox", answer: 0,
-    hint: "친구들은 맛있는 음식이 되려고 열심히 노력했어요." },
-  { q: "김은 무시하는 친구들과 친해지려고 노력하지 않았다.", type: "ox", answer: 1,
-    hint: "김은 친구들과 친해지려고 열심히 노력했어요." },
-  { q: "먼저 서로 안아 주자고 한 건 밥이다.", type: "ox", answer: 1,
-    hint: "먼저 서로 안아 주자고 말한 친구는 김이에요." },
-  { q: "김에게 안긴 친구들은 김에게 사과를 했다.", type: "ox", answer: 0,
-    hint: "김에게 안긴 친구들은 김에게 미안하다고 말했어요." },
-  { q: "김은 친구들을 안고 주문을 외웠다.", type: "ox", answer: 0,
-    hint: "김은 친구들을 안고 \"킴쓰킴쓰 킴킴킴 김밥되어불쓰!\" 하고 주문을 외웠어요." },
+    options: ["좋아했다", "울었다", "무시했다"], answer: 2 },
+  { q: "냉바리오 장고고에 겨울이 찾아오자 친구들은 더 싱싱해졌다.", type: "ox", answer: 1 },
+  { q: "냉장고 친구들이 되고 싶었던 것은 맛있는 음식이다.", type: "ox", answer: 0 },
+  { q: "김은 무시하는 친구들과 친해지려고 노력하지 않았다.", type: "ox", answer: 1 },
+  { q: "먼저 서로 안아 주자고 한 건 밥이다.", type: "ox", answer: 1 },
+  { q: "김에게 안긴 친구들은 김에게 사과를 했다.", type: "ox", answer: 0 },
+  { q: "김은 친구들을 안고 주문을 외웠다.", type: "ox", answer: 0 },
   // <기적의 분실함>
   { q: "주인공이 잃어버린 가방의 이름은 무엇인가요?", type: "mc",
-    options: ["옐로우", "레드", "블루"], answer: 1,
-    hint: "빨간색을 영어로 말하면 무엇일까요? 이 가방은 나중에 성호에게 다시 돌아와요." },
-  { q: "스마트폰 아가씨는 영은이한테 돌아가는 걸 좋아한다.", type: "ox", answer: 1,
-    hint: "영은이가 일을 너무 많이 시켜서 스마트폰 아가씨는 돌아가기 싫어했어요." },
-  { q: "손목시계의 주인은 창욱이다.", type: "ox", answer: 0,
-    hint: "손목시계는 창욱이의 물건이 맞아요." },
-  { q: "창욱이는 할머니를 그리워한다.", type: "ox", answer: 1,
-    hint: "창욱이가 그리워한 사람은 할머니가 아니라 할아버지예요." },
-  { q: "엄마는 성호를 위해 그린을 만들어 주려고 한다.", type: "ox", answer: 0,
-    hint: "엄마는 성호를 위해 정말로 그린을 만들어 주려고 해요." },
-  { q: "고추잠자리가 성호를 화장실로 데려왔다.", type: "ox", answer: 1,
-    hint: "고추잠자리가 성호를 데려간 곳은 화장실이 아니라 분실함이에요." },
-  { q: "창욱이와 성호는 친해졌다.", type: "ox", answer: 0,
-    hint: "이야기 끝에서 창욱이와 성호는 사이좋은 친구가 되었어요." },
-  { q: "레드는 성호에게 돌아왔다.", type: "ox", answer: 0,
-    hint: "잃어버렸던 가방 레드는 다시 성호에게 돌아왔어요." },
+    options: ["옐로우", "레드", "블루"], answer: 1 },
+  { q: "스마트폰 아가씨는 영은이한테 돌아가는 걸 좋아한다.", type: "ox", answer: 1 },
+  { q: "손목시계의 주인은 창욱이다.", type: "ox", answer: 0 },
+  { q: "창욱이는 할머니를 그리워한다.", type: "ox", answer: 1 },
+  { q: "엄마는 성호를 위해 그린을 만들어 주려고 한다.", type: "ox", answer: 0 },
+  { q: "고추잠자리가 성호를 화장실로 데려왔다.", type: "ox", answer: 1 },
+  { q: "창욱이와 성호는 친해졌다.", type: "ox", answer: 0 },
+  { q: "레드는 성호에게 돌아왔다.", type: "ox", answer: 0 },
 ];
 const PICK = 3, PASS = 2;
 const NUMS = ["①", "②", "③", "④", "⑤"];
@@ -420,15 +399,6 @@ function renderQuestion() {
     el("h2", { class: "h q-text", text: q.q })
   );
 
-  // 힌트: 처음엔 숨겨 두고, "힌트 보기"를 누른 사람에게만 보여 줘요.
-  if (q.hint) {
-    const hintBox = el("p", { class: "hint-box", role: "status" }, el("b", { text: "힌트 " }), q.hint);
-    hintBox.hidden = true;
-    const hintBtn = el("button", { class: "hint-btn", type: "button", text: "힌트 보기" });
-    hintBtn.addEventListener("click", () => { hintBox.hidden = false; hintBtn.remove(); });
-    card.append(hintBtn, hintBox);
-  }
-
   const actions = el("div", { class: "actions" });
   const check = el("button", { class: "big-btn", type: "button", text: "정답 확인" });
   check.disabled = true;
@@ -483,7 +453,6 @@ function answerLabel(q) {
 
 function grade(q, card, actions, check) {
   const ok = isRight(q);
-  card.querySelector(".hint-btn")?.remove();
   state.results.push(ok);
   card.querySelectorAll(".opt").forEach((b, i) => {
     b.disabled = true;
