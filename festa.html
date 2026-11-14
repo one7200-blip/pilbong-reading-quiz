@@ -677,7 +677,8 @@ function grade(q, card, actions) {
 
   const last = state.idx === PICK - 1;
   const next = el("button", { class: "big-btn green", type: "button", text: last ? "결과 보기" : "다음 문제" });
-  next.addEventListener("click", () => { if (last) finish(); else { state.idx++; renderQuestion(); } });
+  // 한 번 누르면 바로 잠가서, 여러 번 눌러도 결과와 명단 저장이 한 번만 되게 해요.
+  next.addEventListener("click", () => { if (next.disabled) return; next.disabled = true; if (last) finish(); else { state.idx++; renderQuestion(); } });
   actions.replaceChildren(next);
   next.focus();
 }
